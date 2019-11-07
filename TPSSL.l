@@ -12,7 +12,7 @@ CEOCTAL		0[0-7]*
 CEHEXA		0[xX][A-Fa-f0-9]+
 CREAL	        [0-9]*"."[0-9]+([eE]([\+\-]?)[0-9]+)?
 CCARACTER	['[ -&\(-~]'|'\\t'|'\\n'|'\\'|'\\0']
-TDATO           int|char|float|etc... (poner los demas)
+TDATO           int|char|float|double| etc... (poner los demas)
 PRESERVADA	auto|break|case|char|const|continue|default|do|int|long|register|return|short|signed|sizeof|static|struct|awitch|typedef|union|unsigned|void|volatile|while|double|else|enum|extern|float|for|goto|if
 ID       	[a-zA-Z_][a-zA-Z0-9_]*
 LITERALCADENA	[\"([ -!#-~]*|\\\")*\"]
