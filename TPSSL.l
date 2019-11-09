@@ -23,11 +23,11 @@ LITERALCADENA	    [\"([ -!#-~]*|\\\")*\"]
 {CEOCTAL}         {yylval.c.tipo = 2; strcpy(yylval.c.cadena,yytext); return NUM;}
 {CEHEXA}          {yylval.c.tipo = 3; strcpy(yylval.c.cadena,yytext); return NUM;}
 {CREAL}           {yylval.c.valor = atof(yytext); yylval.c.tipo = 4; return NUM;}
-{CCARACTER}       {strcpy(yylval.caracter,yytext); return CARACTER;}
+{CCARACTER}       {strcpy(yylval.c.caracter,yytext); return CARACTER;}
 {TDATO}           {strcpy(yylval.cadena,yytext); return TDATO;}
 {PRESERVADA}      {strcpy(yylval.cadena,yytext); return PRESERVADA;}
-{ID}              {strcpy(yylval.cadena,yytext); return IDENTIFICADOR;}
-{LITERALCADENA}   {strcpy(yylval.cadena,yytext); return CADENA;}
+{ID}              {strcpy(yylval.c.cadena,yytext); return IDENTIFICADOR;}
+{LITERALCADENA}   {strcpy(yylval.c.cadena,yytext); return CADENA;}
 "if"	            {return IF;}
 "do"	            {return DO;}
 "while"	          {return WHILE;}
