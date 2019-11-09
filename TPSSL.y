@@ -12,18 +12,19 @@ int flag_error=0;
 
 %union { 
   struct {
+    char caracter;
     char cadena[50];
     float  valor;
     int  tipo;
     } c;
   int entero;
-  char cadena[5];
+  char cadena[10];
 }
 
 %token <c> NUM
-%token <cadena> CARACTER
-%token <cadena> CADENA
-%token <cadena> IDENTIFICADOR
+%token <c> CARACTER
+%token <c> CADENA
+%token <c> IDENTIFICADOR
 %token <cadena> TIPO_DATO
 %token <cadena> IF
 %token <cadena> DO
@@ -39,7 +40,7 @@ int flag_error=0;
 %token <entero> error
 
 %type <cadena> identificadorA
-%type <C> expresion
+%type <C> expresionPrimaria
 
 %left '+' '-'
 %right '*' '/'
