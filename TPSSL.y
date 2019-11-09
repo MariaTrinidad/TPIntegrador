@@ -18,33 +18,36 @@ int flag_error=0;
     int  tipo;
     } c;
   int entero;
-  char cadena[10];
+  char palabra[10];
 }
 
 %token <c> NUM
 %token <c> CARACTER
 %token <c> CADENA
 %token <c> IDENTIFICADOR
-%token <cadena> TIPO_DATO
-%token <cadena> IF
-%token <cadena> DO
-%token <cadena> WHILE
-%token <cadena> FOR
-%token <cadena> ELSE
-%token <cadena> RETURN
-%token <cadena> SWITCH
-%token <cadena> CASE
-%token <cadena> BREAK
-%token <cadena> DEFAULT
-%token <cadena> SIZEOF
+%token <c> PRESERVADA
+%token <palabra> TIPO_DATO
+%token <palabra> IF
+%token <palabra> DO
+%token <palabra> WHILE
+%token <palabra> FOR
+%token <palabra> ELSE
+%token <palabra> RETURN
+%token <palabra> SWITCH
+%token <palabra> CASE
+%token <palabra> BREAK
+%token <palabra> DEFAULT
+%token <palabra> SIZEOF
 %token <entero> error
 
-%type <cadena> identificadorA
-%type <C> expresionPrimaria
+%type <c> identificadorA
+%type <c> expPrimaria
 
-%left '+' '-'
+%left '+'
 %right '*' '/'
 %nonassoc '^'
+
+%expect 5
 
 %% /* A continuación las reglas gramaticales y las acciones */
 
@@ -56,8 +59,8 @@ line:     '\n'
         | declaracionFuncion '\n'
 ;      
 
-declaracionFuncion: 	  TIPO_DATO IDENTIFICADOR (declaracion) sentenciaCompuesta ';' {if(flag_error==0){printf("Se han declarado variables \n");};flag_error=0;}
-			| error caracterDeCorte {printf("Falta tipo de dato \n");}
+declaracionFuncion: 	  TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' sentenciaCompuesta ';'
+			| error caracterDeCorte
 
 caracterDeCorte:	';' | '\n'
 
@@ -71,7 +74,7 @@ sentencia:	 	sentenciaCompuesta
 
 sentenciaCompuesta:	'{' listaDeclaraciones listaSentencias '}'
 
-listaDEclaraciones:	declaracion
+listaDeclaraciones:	declaracion
 			|listaDeclaraciones declaracion
 
 listaSentencias: 	sentencia
@@ -91,7 +94,7 @@ listaExpresiones: 	expresion
 
 sentenciaSalto: 	RETURN expresion ';'
 
-declaracion:		TIPODATO listaIdentificadores ';'
+declaracion:		TIPO_DATO listaIdentificadores ';'
 
 listaIdentificadores: 	  identificadorA
 			| identificadorA ',' listaIdentificadores
@@ -99,11 +102,10 @@ listaIdentificadores: 	  identificadorA
 
 identificadorA:		  IDENTIFICADOR
 			| IDENTIFICADOR arreglo
-			| IDENTIFICADOR '=' expresion {if(flag_error==0){printf("Se asigna al identificador %s el valor %d \n",$1,$3);};}
-			| error {if(flag_error==0){printf("Falta identificador \n");flag_error=1;};}
+			| IDENTIFICADOR '=' expresion
 ;
 
-arreglo:		[expresion]
+arreglo:		'[' expresion ']'
 
 // BNF de las expresiones//
 
@@ -114,6 +116,9 @@ expAsignacion:		expCondicional
 operAsignacion:		'='
 			|'+''='
 			|'*''='
+expCondicional:         expOR
+			|expOR '?' expCondicional
+
 expOR:			expAnd
 			|expOR '|''|' expAnd
 
@@ -145,7 +150,7 @@ expUnaria:		expPosfijo
 			|'+''+' expUnaria
 			|'-''-' expUnaria
 			|operUnario expUnaria
-			|SIZEOF '(' nombreTipo ')'
+			|SIZEOF '(' TIPO_DATO ')'
 operUnario:		'&'
 			|'*'
 			|'-'
@@ -153,7 +158,8 @@ operUnario:		'&'
  
 expPosfijo:		expPrimaria
 			|expPosfijo '[' expresion ']'
-			expPosfijo '('listaArgumentos')'
+			|expPosfijo '('listaArgumentos')'
+			|'('expresion')'
 
 listaArgumentos: 	expAsignacion
 			|listaArgumentos ',' expAsignacion
@@ -162,10 +168,10 @@ expPrimaria:		IDENTIFICADOR
 			|CARACTER
 			|NUM
 			|CADENA
-			|'('expresion')'
 
 
 %%
+
 
 yyerror (s)  /* Llamada por yyparse ante un error */
      char *s;
