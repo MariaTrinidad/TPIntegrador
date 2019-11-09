@@ -29,6 +29,7 @@ int flag_error=0;
 %token <cadena> DO
 %token <cadena> WHILE
 %token <cadena> FOR
+%token <cadena> ELSE
 %token <entero> error
 
 %type <cadena> identificadorA
