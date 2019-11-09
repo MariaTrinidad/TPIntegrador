@@ -30,6 +30,12 @@ int flag_error=0;
 %token <cadena> WHILE
 %token <cadena> FOR
 %token <cadena> ELSE
+%token <cadena> RETURN
+%token <cadena> SWITCH
+%token <cadena> CASE
+%token <cadena> BREAK
+%token <cadena> DEFAULT
+%token <cadena> SIZEOF
 %token <entero> error
 
 %type <cadena> identificadorA
