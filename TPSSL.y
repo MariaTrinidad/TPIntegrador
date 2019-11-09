@@ -12,19 +12,23 @@ int flag_error=0;
 
 %union { 
   struct {
-    char caracter;
     char cadena[50];
     float  valor;
     int  tipo;
     } c;
   int entero;
+  char cadena[5];
 }
 
 %token <c> NUM
-%token <c> CARACTER
-%token <c> CADENA
+%token <cadena> CARACTER
+%token <cadena> CADENA
 %token <cadena> IDENTIFICADOR
 %token <cadena> TIPO_DATO
+%token <cadena> IF
+%token <cadena> DO
+%token <cadena> WHILE
+%token <cadena> FOR
 %token <entero> error
 
 %type <cadena> identificadorA
@@ -34,31 +38,18 @@ int flag_error=0;
 %right '*' '/'
 %nonassoc '^'
 
-%% /* A continuación las reglas gramaticales y las acciones */
+%% /* A continuaciÃ³n las reglas gramaticales y las acciones */
 
-input:    /* vacío */
+input:    /* vacÃ­o */
         | input line
 ;
 
 line:     '\n'
-        | sentenciaDeclaracion '\n'
-;
+        | declaracionFuncion '\n'
+;      
 
-sentenciaDeclaracion: 	  TIPO_DATO {printf("Se declaro el tipo de dato %s \n",$1);} listaIdentificadores ';' {if(flag_error==0){printf("Se han declarado variables \n");};flag_error=0;}
+declaracionFuncion: 	  TIPO_DATO IDENTIFICADOR (declaracion) sentenciaCompuesta ';' {if(flag_error==0){printf("Se han declarado variables \n");};flag_error=0;}
 			| error caracterDeCorte {printf("Falta tipo de dato \n");}
-
-listaIdentificadores: 	  identificadorA
-			| identificadorA ',' listaIdentificadores
-;
-
-identificadorA:		  IDENTIFICADOR
-			| IDENTIFICADOR '=' expresion {if(flag_error==0){printf("Se asigna al identificador %s el valor %d \n",$1,$3);};}
-			| error {if(flag_error==0){printf("Falta identificador \n");flag_error=1;};}
-;
-
-expresion:		NUM
-			| error {flag_error=1;printf("Valor no reconocido para asignar \n");}
-;
 
 caracterDeCorte:	';' | '\n'
 
@@ -92,10 +83,17 @@ listaExpresiones: 	expresion
 
 sentenciaSalto: 	RETURN expresion ';'
 
-declaracion:		TIPODATO IDENTIFICADOR asignacion ';'
+declaracion:		TIPODATO listaIdentificadores ';'
 
-listaIdentificadores:	IDENTIFICADOR asignacion ';'
-			|listaIentificadores arreglo ';'
+listaIdentificadores: 	  identificadorA
+			| identificadorA ',' listaIdentificadores
+;
+
+identificadorA:		  IDENTIFICADOR
+			| IDENTIFICADOR arreglo
+			| IDENTIFICADOR '=' expresion {if(flag_error==0){printf("Se asigna al identificador %s el valor %d \n",$1,$3);};}
+			| error {if(flag_error==0){printf("Falta identificador \n");flag_error=1;};}
+;
 
 arreglo:		[expresion]
 
@@ -153,8 +151,9 @@ listaArgumentos: 	expAsignacion
 			|listaArgumentos ',' expAsignacion
 
 expPrimaria:		IDENTIFICADOR
-			|CONSTANTE
-			|LITERALCADENA
+			|CARACTER
+			|NUM
+			|CADENA
 			|'('expresion')'
 
 
