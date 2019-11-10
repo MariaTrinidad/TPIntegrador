@@ -60,6 +60,7 @@ line:     '\n'
 ;      
 
 declaracionFuncion: 	  TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' sentenciaCompuesta ';'
+			| TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' sentenciaCompuesta ';' declaracionFuncion
 			| error caracterDeCorte
 
 caracterDeCorte:	';' | '\n'
@@ -86,8 +87,8 @@ sentenciaSeleccion:	IF'(' expresion ')' sentencia
 			|IF'('expresion')' sentencia ELSE sentencia
 
 sentenciaIteracion:	WHILE '(' expresion ')' sentencia
-			DO sentencia WHILE '(' expresion ')' ';'
-			FOR '(' expresion ';' listaExpresiones ')' sentencia
+			| DO sentencia WHILE '(' expresion ')' ';'
+			| FOR '(' expresion ';' listaExpresiones ')' sentencia
 
 listaExpresiones: 	expresion
 			|listaExpresiones ';' expresion
