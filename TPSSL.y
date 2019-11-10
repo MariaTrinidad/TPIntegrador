@@ -57,6 +57,8 @@ input:    /* vacío */
 
 line:     '\n'
         | declaracionFuncion '\n'
+	| declaracion '\n'
+	| sentencia '\n'
 ;      
 
 declaracionFuncion: 	  TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' ';'
