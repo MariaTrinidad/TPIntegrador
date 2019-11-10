@@ -169,6 +169,7 @@ expPrimaria:		IDENTIFICADOR
 			|CARACTER
 			|NUM
 			|CADENA
+			|
 
 
 %%
