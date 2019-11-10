@@ -59,8 +59,7 @@ line:     '\n'
         | declaracionFuncion '\n'
 ;      
 
-declaracionFuncion: 	  TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' sentenciaCompuesta ';'
-			| TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' sentenciaCompuesta ';' declaracionFuncion
+declaracionFuncion: 	  TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' ';'
 			| error caracterDeCorte
 
 caracterDeCorte:	';' | '\n'
