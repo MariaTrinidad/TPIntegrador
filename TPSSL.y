@@ -8,6 +8,18 @@
 extern FILE *yyin;
 extern FILE *yyout;
 int flag_error=0;
+int i=1,j=2,k=3;
+typedef struct Funcion {
+		char tipo[50];
+		char identificador[50];
+		}Funciones;
+typedef struct Variable {
+		int funcion;
+		char tipo[50];
+		char identificador[50];
+		}Variables;
+Funciones F[50];
+Variables V[50];
 %}
 
 %union { 
@@ -38,7 +50,6 @@ int flag_error=0;
 %token <palabra> BREAK
 %token <palabra> DEFAULT
 %token <palabra> SIZEOF
-%token <entero> error
 
 %type <c> identificadorA
 %type <c> expPrimaria
@@ -47,22 +58,21 @@ int flag_error=0;
 %right '*' '/'
 %nonassoc '^'
 
-%expect 5
+%expect 16
 
 %% /* A continuación las reglas gramaticales y las acciones */
-
 input:    /* vacío */
         | input line
 ;
 
-line:     '\n'
-        | declaracionFuncion '\n'
-	| declaracion '\n'
-	| sentencia '\n'
+line:    declaracionFuncion
+	| declaracion ';'  {printf ("decl");}
+	| sentencia 
+	| error caracterDeCorte {printf ("error");}
 ;      
 
-declaracionFuncion: 	  TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' ';'
-			| error caracterDeCorte
+declaracionFuncion: 	 TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' ';' {printf ("%d funcion\n",i);/*strcpy(F[i].tipo,$<palabra>1);strcpy(F[i].identificador,$<c.cadena>2); i++;*/}
+			| error caracterDeCorte {printf ("error\n");}
 
 caracterDeCorte:	';' | '\n'
 
@@ -73,41 +83,58 @@ sentencia:	 	sentenciaCompuesta
 			|sentenciaSeleccion
 			|sentenciaIteracion
 			|sentenciaSalto
+			| error caracterDeCorte {printf ("error");}
 
 sentenciaCompuesta:	'{' listaDeclaraciones listaSentencias '}'
+			| error caracterDeCorte {printf ("error");}
+	
 
 listaDeclaraciones:	declaracion
-			|listaDeclaraciones declaracion
+			|declaracion ';' listaDeclaraciones
+			| error caracterDeCorte {printf ("error");}
+
 
 listaSentencias: 	sentencia
-			|listaSentencias sentencia
+			|sentencia ',' listaSentencias
+			| error caracterDeCorte {printf ("error");}
+
 
 sentenciaExpresion:	expresion ';'
+			| error caracterDeCorte {printf ("error");}
+
 
 sentenciaSeleccion:	IF'(' expresion ')' sentencia
 			|IF'('expresion')' sentencia ELSE sentencia
+			| error caracterDeCorte {printf ("error");}
+
 
 sentenciaIteracion:	WHILE '(' expresion ')' sentencia
 			| DO sentencia WHILE '(' expresion ')' ';'
 			| FOR '(' expresion ';' listaExpresiones ')' sentencia
+			| error caracterDeCorte {printf ("error");}
+
 
 listaExpresiones: 	expresion
 			|listaExpresiones ';' expresion
+			| error caracterDeCorte {printf ("error");}
+
 
 sentenciaSalto: 	RETURN expresion ';'
+			| error caracterDeCorte {printf ("error");}
 
-declaracion:		TIPO_DATO listaIdentificadores ';'
+declaracion:		/* vacío */
+			|TIPO_DATO listaIdentificadores {printf ("%d tipo\n",j);} /*for(k=j;k>=0;k--){if(strcmp(V[k].tipo,"\0")){strcpy(V[k].tipo,$<palabra<1);};};}*/
+			| error caracterDeCorte {printf ("error");}
 
 listaIdentificadores: 	  identificadorA
 			| identificadorA ',' listaIdentificadores
+			| error caracterDeCorte {printf ("error");}
 ;
 
-identificadorA:		  IDENTIFICADOR
-			| IDENTIFICADOR arreglo
+identificadorA:		  IDENTIFICADOR {printf ("%d variable \n",k);/*for(k=0;k<j;k++){if(strcmp(V[k].identificador,$<c.cadena>1)){k=j+1;};};if(k=j){V[j].funcion=i;strcpy(V[j].identificador,$<c.cadena>1);j++;};if(k!=j){strcpy(V[j].identificador,"\0");};*/}
 			| IDENTIFICADOR '=' expresion
+			| error caracterDeCorte {printf ("error");}
 ;
-
-arreglo:		'[' expresion ']'
 
 // BNF de las expresiones//
 
@@ -170,7 +197,6 @@ expPrimaria:		IDENTIFICADOR
 			|CARACTER
 			|NUM
 			|CADENA
-			|
 
 
 %%
@@ -184,7 +210,7 @@ yyerror (s)  /* Llamada por yyparse ante un error */
 
 main ()
 {
-  yyin = fopen("entrada.txt","r+");  
-  yyout = fopen("salida.txt","w");
+ /* yyin = fopen("entrada.txt","r+"); */
+ /* yyout = fopen("salida.txt","w");  */
   yyparse ();
 }

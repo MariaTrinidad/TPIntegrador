@@ -27,7 +27,7 @@ LITERALCADENA	  \"(\\.|[^\\"])*\"
 {CREAL}           {yylval.c.valor = atof(yytext); yylval.c.tipo = 4; return NUM;}
 {CCARACTER}       {yylval.c.caracter = yytext; return CARACTER;}
 {TDATO}           {strcpy(yylval.palabra,yytext); return TIPO_DATO;}
-{RESERVADA}       {strcpy(yylval.palabra,yytext); return PRESERVADA;}
+{RESERVADA}       {strcpy(yylval.c.cadena,yytext); return PRESERVADA;}
 "if"	          {return IF;}
 "do"	          {return DO;}
 "while"	          {return WHILE;}
@@ -56,16 +56,11 @@ LITERALCADENA	  \"(\\.|[^\\"])*\"
 "^"               {return '^';}
 "("               {return '(';}
 ")"               {return ')';}
-"\n"              {return '\n';}
+"\n"		  {return '\n';}
+'\n'		  {return '\n';}
+[\t]+
+'\n'[\n]+
 [ \t\n]+          /* se come los espacios en blanco */
 
 %%
-
-int main(){
-yyout = fopen("salida.txt","w");
-yyin = fopen("entrada.txt","r");
-yylex();
-return0;
-}
-
 
