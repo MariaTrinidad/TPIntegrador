@@ -74,9 +74,9 @@ input:
 ;
 
 line:    declaracionFuncion caracterDeCorte2 {printf ("decl func \n");}
-	| declaracion ';' caracterDeCorte2 {printf ("decl \n");}
+	| declaracion ';' caracterDeCorte2 {printf ("decl \n");l++;}
 	| sentencia caracterDeCorte2 {printf("sentencia \n");}
-	| error caracterDeCorte
+	| error caracterDeCorte {k=l;}
 ;
 
 caracterDeCorte:         ';' | '\n' | ';''\n'
@@ -104,7 +104,7 @@ sentenciaCompuesta:	'{'/* vacío */'}'
 	
 
 listaDeclaraciones:	/* vacío */
-			|declaracion
+			|declaracion {l++}
 			|declaracion ',' listaDeclaraciones
 ;
 

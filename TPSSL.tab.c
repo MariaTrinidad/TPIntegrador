@@ -1541,7 +1541,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 77 "TPSSL.y"
-    {printf ("decl \n");;}
+    {printf ("decl \n");l++;;}
     break;
 
   case 6:
@@ -1551,11 +1551,25 @@ yyreduce:
     {printf("sentencia \n");;}
     break;
 
+  case 7:
+
+/* Line 1455 of yacc.c  */
+#line 79 "TPSSL.y"
+    {k=l;;}
+    break;
+
   case 13:
 
 /* Line 1455 of yacc.c  */
 #line 88 "TPSSL.y"
     {printf ("%d funcion\n",h);h++;;}
+    break;
+
+  case 23:
+
+/* Line 1455 of yacc.c  */
+#line 107 "TPSSL.y"
+    {l++;}
     break;
 
   case 34:
@@ -1596,7 +1610,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 1600 "TPSSL.tab.c"
+#line 1614 "TPSSL.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
