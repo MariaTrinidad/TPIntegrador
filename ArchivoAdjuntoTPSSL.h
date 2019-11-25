@@ -21,12 +21,8 @@ void inicializar(Funciones Fa[], Variables Va[])
 {
 	for(int y=0;y<50;y++)
 	{
-		strcpy(Va[y].tipo," ");
-		strcpy(Va[y].identificador," ");
 		Va[y].funcion = 0;
 		Va[y].vusado = 0;
-		strcpy(Fa[y].tipo," ");
-		strcpy(Fa[y].identificador," ");
 		Fa[y].funcion = 0;
 		Fa[y].fusado = 0;
 	}
@@ -38,7 +34,7 @@ int busquedaId(Variables Va[], char iden[])
 	while(i<50)
 	{
 		if(strcmp(Va[i].identificador, iden))
-		{
+		{			
 			return 1;
 		}
 		i++;
@@ -56,8 +52,11 @@ void agregarTipoId(Variables Va[], char tipo[], int var1, int var2)
 {	
 	for(int i=var1-1;i>=var2;i--)
 	{
-		strcpy(Va[i].tipo,tipo);
-		Va[i].vusado = 1;
+		if(strcmp(Va[i].identificador,"\0")!=0)
+		{
+			strcpy(Va[i].tipo,tipo);
+			Va[i].vusado = 1;
+		}
 	}
 }
 

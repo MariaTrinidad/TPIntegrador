@@ -76,7 +76,7 @@ input:
 line:    declaracionFuncion caracterDeCorte2 {printf ("decl func \n");}
 	| declaracion ';' caracterDeCorte2 {printf ("decl \n");l++;}
 	| sentencia caracterDeCorte2 {printf("sentencia \n");}
-	| error caracterDeCorte {k=l;}
+	| error caracterDeCorte {for(int o=k;o>l;o--){V[o].vusado = 0;};k=l;}
 ;
 
 caracterDeCorte:         ';' | '\n' | ';''\n'
@@ -131,14 +131,14 @@ sentenciaExpresion:	expresion ';'
 ;
 
 
-declaracion:		TIPO_DATO listaIdentificadores {printf ("%d tipo\n",k);agregarTipoId(V,$<c.cadena>1,j,k);k=j;}
+declaracion:		TIPO_DATO listaIdentificadores {printf ("%d tipo\n",k);printf("%s \n ",$<palabra>1);if(y==1){agregarTipoId(V,$<palabra>1,j,k);k=j;};}
 ;
 
 listaIdentificadores: 	  identificadorA
 			| identificadorA ',' listaIdentificadores
 ;
 
-identificadorA:		  IDENTIFICADOR {printf ("%d variable \n",j);if(busquedaId(V,$<c.cadena>1)){agregarId(V,$<c.cadena>1,h,j);j++;};}
+identificadorA:		  IDENTIFICADOR {printf ("%d variable \n",j);if(busquedaId(V,$<c.cadena>1)){agregarId(V,$<c.cadena>1,h,j);j++;y=1}else{y=0;};}
 			| IDENTIFICADOR '=' expresion
 ;
 

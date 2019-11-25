@@ -1555,7 +1555,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 79 "TPSSL.y"
-    {k=l;;}
+    {for(int o=k;o>l;o--){V[o].vusado = 0;};k=l;;}
     break;
 
   case 13:
@@ -1576,7 +1576,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 134 "TPSSL.y"
-    {printf ("%d tipo\n",k);agregarTipoId(V,(yyvsp[(1) - (2)].c.cadena),j,k);k=j;;}
+    {printf ("%d tipo\n",k);printf("%.5s \n ",(yyvsp[(1) - (2)].palabra));agregarTipoId(V,(yyvsp[(1) - (2)].palabra),j,k);k=j;;}
     break;
 
   case 37:
