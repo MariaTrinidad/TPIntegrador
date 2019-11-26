@@ -790,27 +790,27 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 26 "TPSSL.l"
-{yylval.c.valor = atoi(yytext); yylval.c.tipoDato = 1; yylval.c.tipoOp = 1; return NUM;}
+{strcpy(yylval.c.cadena,yytext); yylval.c.valor = atoi(yytext); yylval.c.tipoDato = 1; return NUM;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 27 "TPSSL.l"
-{strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 1; yylval.c.tipoOp = 2; return NUM;}
+{strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 1; return NUM;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 28 "TPSSL.l"
-{strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 1; yylval.c.tipoOp = 3; return NUM;}
+{strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 1; return NUM;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 29 "TPSSL.l"
-{yylval.c.valor = atof(yytext); yylval.c.tipoDato = 1; yylval.c.tipoOp = 4; return NUM;}
+{strcpy(yylval.c.cadena,yytext); yylval.c.valor = atof(yytext); yylval.c.tipoDato = 1; return NUM;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 30 "TPSSL.l"
-{yylval.c.caracter = yytext; yylval.c.tipoDato = 1; yylval.c.tipoOp = 1; return CARACTER;}
+{strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 1; return CARACTER;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
@@ -885,7 +885,7 @@ YY_RULE_SETUP
 case 20:
 YY_RULE_SETUP
 #line 45 "TPSSL.l"
-{strcpy(yylval.c.cadena,yytext); return CADENA;}
+{strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 2; return CADENA;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP

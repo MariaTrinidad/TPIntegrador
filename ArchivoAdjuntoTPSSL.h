@@ -16,25 +16,32 @@ typedef struct Variable {
 		char identificador[50];
 		int vusado;
 		}Variables;
+typedef struct errorOperacion {
+		char error1[50];
+		char error2[50];
+		char operacion[50];
+		int eusado;
+		}ErrorOp;
 
-void inicializar(Funciones Fa[], Variables Va[])
+void inicializar(Funciones Fa[], Variables Va[],ErrorOp Ea[])
 {
 	for(int y=0;y<50;y++)
 	{
-		Va[y].funcion = 0;
+		Va[y].funcion = 60;
 		Va[y].vusado = 0;
-		Fa[y].funcion = 0;
+		Fa[y].funcion = 60;
 		Fa[y].fusado = 0;
+		Ea[y].eusado = 0;
 	}
 }
 
-int busquedaId(Variables Va[], char iden[])
+int busquedaId(Variables Va[], Funciones Fa[], char iden[])
 {
-	int i=0;	
+	int i=0;
 	while(i<50)
 	{
-		if(strcmp(Va[i].identificador, iden))
-		{			
+		if(strcmp(Va[i].identificador, iden) || strcmp(Fa[i].identificador, iden))
+		{
 			return 1;
 		}
 		i++;
@@ -42,17 +49,17 @@ int busquedaId(Variables Va[], char iden[])
 	return 0;
 }
 
-void agregarId(Variables Va[], char iden[], int funcion, int var)
+void agregarId(Variables Va[], char iden[], int var)
 {
 	strcpy(Va[var].identificador,iden);
-	Va[var].funcion = funcion;
+	Va[var].funcion=60;
 }
 
 void agregarTipoId(Variables Va[], char tipo[], int var1, int var2)
-{	
-	for(int i=var1-1;i>=var2;i--)
+{
+	for(int i=var2;i<var1;i++)
 	{
-		if(strcmp(Va[i].identificador,"\0")!=0)
+		if(Va[i].funcion == 60)
 		{
 			strcpy(Va[i].tipo,tipo);
 			Va[i].vusado = 1;
@@ -60,50 +67,122 @@ void agregarTipoId(Variables Va[], char tipo[], int var1, int var2)
 	}
 }
 
+void agregarTipoIdFuncion(Variables Va[],char tipo,int j)
+{
+	strcpy(Va[j].tipo,tipo);
+	Va[j].vusado = 1;
+}
+
+void agregarFuncionId(Variables Va[], int funcion,int var1, int var2)
+{
+	for(int i=var2;i<=var1;i++)
+	{
+		Va[i].funcion = funcion;
+		printf("%s\n",Va[i].identificador);
+	}
+}
+
 void mostrarIds(Variables Va[])
 {
 	int i=0;
-	printf("\n Mostrando la lista de identificadores:\n");
-	while (i<50) 
-	{	
+	printf("\n Se han declarado las siguientes variables:\n");
+	while (i<50)
+	{
 		if(Va[i].vusado == 1)
 		{
 			printf( "Nombre: %s\n", Va[i].identificador);
 			printf( "Tipo : %s\n", Va[i].tipo);
-			printf( "%d\n", Va[i].vusado);
+			printf( "--------------------\n");
 		}
 		i++;
 	}
  }
 
-void agregarFuncion(Funciones Fa[], char iden[], char tipo[], int funcion, int var)
+void agregarFuncion(Funciones Fa[], char iden[], char tipo[], int funcion)
 {
-	strcpy(Fa[var].identificador,iden);
-	strcpy(Fa[var].tipo,tipo);
-	Fa[var].funcion = funcion;
-	Fa[var].fusado = 1;
+	strcpy(Fa[funcion].identificador,iden);
+	strcpy(Fa[funcion].tipo,tipo);
+	Fa[funcion].funcion = funcion;
+	Fa[funcion].fusado = 1;
 }
 
-void mostrarFuncs(Funciones Fa[])
+void mostrarFuncs(Funciones Fa[],Variables Va[])
 {
 	int i=0;
+	int u=0;
+	int z=0;
 	printf("\n Se han declarado las siguientes funciones:\n\n");
-	while (i<50) 
-	{	
+	while (i<50)
+	{
 		if(Fa[i].fusado == 1)
 		{
 			printf( "Nombre: %s\n", Fa[i].identificador);
 			printf( "Tipo : %s\n", Fa[i].tipo);
+			printf( "De entrada : \n\n");
+			for(u=0; u<50; u++)
+			{
+				if((Va[u].funcion == i) && (!strcmp(Va[u].identificador," ")) )
+					{
+						printf( "Variable : %s\n", Va[u].identificador);
+						printf( "Tipo : %s\n", Va[u].tipo);
+						printf( "%d\n", Va[u].funcion);
+						z++;
+					}
+			}
+			if(z==0)
+			{
+				printf("Vacia \n");
+			}
+			z=0;
+			printf("--------------------\n");
 		}
 		i++;
 	}
  }
 
-void menu(Variables Va[], Funciones Fa[])
+ int busquedaIdDeclTipo(Variables Va[], Funciones Fa[], char cadena[])
+ {
+	int i=0;
+	while(i<50)
+	{
+		if(strcmp(Va[i].identificador, cadena))
+		{
+			return Va[i].tipo;
+		}
+		if(strcmp(Fa[i].identificador, cadena))
+		{
+			return Fa[i].tipo;
+		}
+		i++;
+	}
+	return 0;
+ }
+
+void operacionError(ErrorOp Ea[],char operador1[],char operador2[],char operacion[], int valor)
+{
+	strcpy(Ea[valor].error1,operador1);
+	strcpy(Ea[valor].error2,operador2);
+	strcpy(Ea[valor].operacion,operacion);
+	Ea[valor].eusado = 1;
+}
+
+void erroresOp(ErrorOp Ea[])
+{
+	for(int m=0; m<50; m++)
+			{
+				if(Ea[m].eusado == 1)
+				{
+					printf( "Error en la %s entre %s y %s \n",Ea[m].operacion,Ea[m].error1,Ea[m].error2);
+				}
+			}
+}
+
+void menu(Variables Va[], Funciones Fa[],ErrorOp Ea[])
 {
     printf("\n");
     mostrarIds(Va);
-    mostrarFuncs(Fa);
+    mostrarFuncs(Fa,Va);
+    erroresOp(Ea);
 }
 
 void yyerror(char *s){

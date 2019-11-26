@@ -79,14 +79,13 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 18 "TPSSL.y"
+#line 19 "TPSSL.y"
  
   struct {
     char caracter;
     char cadena[50];
     float  valor;
     int  tipoDato;
-    int  tipoOp;
     } c;
   int entero;
   char palabra[10];
@@ -94,7 +93,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 98 "TPSSL.tab.h"
+#line 97 "TPSSL.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

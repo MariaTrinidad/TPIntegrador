@@ -9,9 +9,10 @@
 extern FILE *yyin;
 extern FILE *yyout;
 int flag_error=0;
-int h=0,j=0,k=0,y=0,l=0;
+int h=0,j=0,k=0,y=0,l=0,x=0,q=0,g=0,idtipo1=0;
 Funciones F[50];
 Variables V[50];
+ErrorOp E[50];
 
 %}
 
@@ -21,7 +22,6 @@ Variables V[50];
     char cadena[50];
     float  valor;
     int  tipoDato;
-    int  tipoOp;
     } c;
   int entero;
   char palabra[10];
@@ -65,7 +65,7 @@ Variables V[50];
 %right '*' '/'
 %nonassoc '^'
 
-%expect 23
+%expect 22
 %error-verbose
 
 %% /* A continuación las reglas gramaticales y las acciones */
@@ -73,8 +73,8 @@ input:
 	|input line {printf ("linea terminada \n");}
 ;
 
-line:    declaracionFuncion caracterDeCorte2 {printf ("decl func \n");}
-	| declaracion ';' caracterDeCorte2 {printf ("decl \n");l++;}
+line:    declaracionFuncion caracterDeCorte2 {printf ("decl func \n");l=0;}
+	| declaracion ';' caracterDeCorte2 {printf ("decl \n");l=0;}
 	| sentencia caracterDeCorte2 {printf("sentencia \n");}
 	| error caracterDeCorte {for(int o=k;o>l;o--){V[o].vusado = 0;};k=l;}
 ;
@@ -85,8 +85,8 @@ caracterDeCorte:         ';' | '\n' | ';''\n'
 caracterDeCorte2:          | '\n'   
 ;
 
-declaracionFuncion: 	TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' ';' {printf ("%d funcion\n",h);h++;}
-			|TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' sentenciaCompuesta 
+declaracionFuncion: 	TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' ';' {if(busquedaId(V,F,$<c.cadena>2)){agregarFuncion(F,$<c.cadena>2,$<palabra>1,h);printf ("%d funcion\n",h);q=j-l;agregarFuncionId(V,h,x,q);h++;};}
+			|TIPO_DATO IDENTIFICADOR '(' listaDeclaraciones ')' sentenciaCompuesta {if(busquedaId(V,F,$<c.cadena>2)){agregarFuncion(F,$<c.cadena>2,$<palabra>1,h);printf ("%d funcion\n",h);q=j-l;agregarFuncionId(V,h,x,q);h++;};}
 ;
 
 //expresiones de las sentencias en c//
@@ -103,9 +103,9 @@ sentenciaCompuesta:	'{'/* vacío */'}'
 ;
 	
 
-listaDeclaraciones:	/* vacío */
-			|declaracion {l++}
-			|declaracion ',' listaDeclaraciones
+listaDeclaraciones:	/* vacío */ {x=j;}
+			|declaracionVarFuncion ',' listaDeclaraciones
+			|declaracionVarFuncion 
 ;
 
 
@@ -130,25 +130,27 @@ sentenciaSalto: 	RETURN expresion ';'
 sentenciaExpresion:	expresion ';'
 ;
 
+declaracionVarFuncion:  TIPO_DATO identificadorA {if(y==1){agregarTipoIdFuncion(V,$<palabra>1,j);k=j;printf ("%d tipo\n",k);};}
+;
 
-declaracion:		TIPO_DATO listaIdentificadores {printf ("%d tipo\n",k);printf("%s \n ",$<palabra>1);if(y==1){agregarTipoId(V,$<palabra>1,j,k);k=j;};}
+declaracion:		TIPO_DATO listaIdentificadores {if(y==1){agregarTipoId(V,$<palabra>1,j,k);k=j;printf ("%d tipo\n",k);};}
 ;
 
 listaIdentificadores: 	  identificadorA
 			| identificadorA ',' listaIdentificadores
 ;
 
-identificadorA:		  IDENTIFICADOR {printf ("%d variable \n",j);if(busquedaId(V,$<c.cadena>1)){agregarId(V,$<c.cadena>1,h,j);j++;y=1}else{y=0;};}
-			| IDENTIFICADOR '=' expresion
+identificadorA:		  IDENTIFICADOR {x=j;if(busquedaId(V,F,$<c.cadena>1)){agregarId(V,$<c.cadena>1,j);j++;y=1;l++;printf ("%d variable \n",j);}else{y=0;};}
+			| IDENTIFICADOR '=' expresion {x=j;if(busquedaId(V,F,$<c.cadena>1)){agregarId(V,$<c.cadena>1,j);j++;y=1;l++;printf ("%d variable \n",j);}else{y=0;};}
 ;
 
 // BNF de las expresiones//
 
-expresion:		expAsignacion {printf ("decl expres \n");}
+expresion:		expAsignacion {printf ("decl expres \n"); $<c.tipoDato>$=$<c.tipoDato>1;}
 ;
 
-expAsignacion:		expCondicional
-			|expUnaria operAsignacion expAsignacion
+expAsignacion:		expCondicional {$<c.tipoDato>$=$<c.tipoDato>1;}
+			|expUnaria operAsignacion expAsignacion {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "igual/porigual",g);g++;};}
 ;
 
 operAsignacion:		AUMENTOIGUAL
@@ -156,25 +158,25 @@ operAsignacion:		AUMENTOIGUAL
 			|'=' {printf ("decl = \n");}
 ;
 
-expCondicional:         expOR
-			|expOR OPCION expCondicional
+expCondicional:         expOR {$<c.tipoDato>$=$<c.tipoDato>1;}
+			|expOR OPCION expCondicional {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "opcional",g);g++;};}
 ;
 
-expOR:			expAnd
-			|expOR OR expAnd
+expOR:			expAnd {$<c.tipoDato>$=$<c.tipoDato>1;}
+			|expOR OR expAnd {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "or",g);g++;};}
 ;
 
-expAnd:			 expIgualdad
-			|expAnd AND expIgualdad
+expAnd:			 expIgualdad{$<c.tipoDato>$=$<c.tipoDato>1;}
+			|expAnd AND expIgualdad {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "and",g);g++;};}
 ;
 
-expIgualdad:		expRelacional
-			|expIgualdad IGUALDAD2 expRelacional {printf ("decl == \n");}
-			|expIgualdad DISTINTO expRelacional
+expIgualdad:		expRelacional {$<c.tipoDato>$=$<c.tipoDato>1;}
+			|expIgualdad IGUALDAD2 expRelacional {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "igualdad comparativa",g);g++;};}
+			|expIgualdad DISTINTO expRelacional {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "distinto",g);g++;};}
 ;
 
-expRelacional: 		expAditiva
-			|expRelacional operRelacional expAditiva
+expRelacional: 		expAditiva {$<c.tipoDato>$=$<c.tipoDato>1;}
+			|expRelacional operRelacional expAditiva {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "menor/mayor/menorigual/mayorigual",g);g++;};}
 ;
 
 operRelacional:		MAYOR
@@ -184,18 +186,17 @@ operRelacional:		MAYOR
 			
 ;
 
-expAditiva:		expMultiplicativa
-			|expAditiva '+' expMultiplicativa
-			|expAditiva '-' expMultiplicativa
+expAditiva:		expMultiplicativa {$<c.tipoDato>$=$<c.tipoDato>1;}
+			|expAditiva '+' expMultiplicativa {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "suma",g);g++;};}
+			|expAditiva '-' expMultiplicativa {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "resta",g);g++;};}
 ;
 
-expMultiplicativa:	 expUnaria
-			|expMultiplicativa '*' expUnaria
-			|expMultiplicativa '/' expUnaria
-			|expMultiplicativa '%' expUnaria
-;
+expMultiplicativa:	 expUnaria {$<c.tipoDato>$=$<c.tipoDato>1}
+			|expMultiplicativa '*' expUnaria {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "multiplicacion",g);g++;};}
+			|expMultiplicativa '/' expUnaria {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "division",g);g++;};}
+			|expMultiplicativa '%' expUnaria {if ($<c.tipoDato>1==$<c.tipoDato>3){$<c.tipoDato>$ = $<c.tipoDato>1;}else{operacionError(E,$<c.cadena>1, $<c.cadena>3, "resto division entera",g);g++;};}
 
-expUnaria:		expPosfijo
+expUnaria:		expPosfijo {$<c.tipoDato>$=$<c.tipoDato>1;}
 			|AUMENTO expUnaria
 			|DECREMENTO expUnaria
 			|expUnaria AUMENTO
@@ -210,7 +211,7 @@ operUnario:		'&'
 			|'!'
 ;
  
-expPosfijo:		expPrimaria
+expPosfijo:		expPrimaria {$<c.tipoDato>$=$<c.tipoDato>1;}
 			|expPosfijo '[' expresion ']'
 			|expPosfijo '('listaArgumentos')'
 			|'('expresion')'
@@ -220,10 +221,10 @@ listaArgumentos: 	expAsignacion
 			|listaArgumentos ',' expAsignacion
 ;
 
-expPrimaria:		IDENTIFICADOR
-			|CARACTER
-			|NUM
-			|CADENA
+expPrimaria:		IDENTIFICADOR {if(idtipo1=busquedaIdDeclTipo(V,F,$<c.cadena>1)){$<c.tipoDato>$=V[idtipo1].tipo;}else{$<c.tipoDato>$=0;};}
+			|CARACTER {$<c.tipoDato>$=$<c.tipoDato>1;}
+			|NUM {$<c.tipoDato>$=$<c.tipoDato>1;}
+			|CADENA {$<c.tipoDato>$=$<c.tipoDato>1;}
 ;
 
 
@@ -231,9 +232,9 @@ expPrimaria:		IDENTIFICADOR
 
 int main ()
 {
-  inicializar(V,F);
+  inicializar(V,F,E);
   yyin = fopen("entrada.txt","r+");
   yyout = fopen("salida.txt","w");
   yyparse ();
-  menu(V,F);
+  menu(V,F,E);
 }

@@ -23,11 +23,11 @@ LITERALCADENA	  \"(\\.|[^\\"])*\"
 
 %%
 
-{CEDECIMAL}       {yylval.c.valor = atoi(yytext); yylval.c.tipoDato = 1; yylval.c.tipoOp = 1; return NUM;}
-{CEOCTAL}         {strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 1; yylval.c.tipoOp = 2; return NUM;}
-{CEHEXA}          {strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 1; yylval.c.tipoOp = 3; return NUM;}
-{CREAL}           {yylval.c.valor = atof(yytext); yylval.c.tipoDato = 1; yylval.c.tipoOp = 4; return NUM;}
-{CCARACTER}       {yylval.c.caracter = yytext; yylval.c.tipoDato = 1; yylval.c.tipoOp = 1; return CARACTER;}
+{CEDECIMAL}       {strcpy(yylval.c.cadena,yytext); yylval.c.valor = atoi(yytext); yylval.c.tipoDato = 1; return NUM;}
+{CEOCTAL}         {strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 1; return NUM;}
+{CEHEXA}          {strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 1; return NUM;}
+{CREAL}           {strcpy(yylval.c.cadena,yytext); yylval.c.valor = atof(yytext); yylval.c.tipoDato = 1; return NUM;}
+{CCARACTER}       {strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 1; return CARACTER;}
 {TDATO}           {strcpy(yylval.palabra,yytext); return TIPO_DATO;}
 {RESERVADA}       {strcpy(yylval.c.cadena,yytext); return PRESERVADA;}
 "if"	          {return IF;}
@@ -42,7 +42,7 @@ LITERALCADENA	  \"(\\.|[^\\"])*\"
 "default"	  {return DEFAULT;}
 "sizeof"	  {return SIZEOF;}
 {ID}              {strcpy(yylval.c.cadena,yytext); return IDENTIFICADOR;}
-{LITERALCADENA}   {strcpy(yylval.c.cadena,yytext); return CADENA;}
+{LITERALCADENA}   {strcpy(yylval.c.cadena,yytext); yylval.c.tipoDato = 2; return CADENA;}
 ","	          {return ',';}
 ";"               {return ';';}
 "."               {return '.';}
